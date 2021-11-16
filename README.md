@@ -34,7 +34,7 @@ public function behaviors()
 {
     return [
         'encryption' => [
-            'class' => '\nickcv\encrypter\behaviors\EncryptionBehavior',
+            'class' => '\Cryption\EncryptionBehavior',
             'attributes' => [
                 'attribute1',
                 'attribute2',
