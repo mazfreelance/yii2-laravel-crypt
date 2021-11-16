@@ -7,7 +7,7 @@ this is same as laravel(>=5.1) encrypt and decrypt function.
 
 ## Installation
 ```
-composer require mazfreelance/yii2-laravel-crypt
+composer require mazfreelance/yii2-laravel-crypt -W
 ```
 
 ## Config
