@@ -97,7 +97,7 @@ class EncryptionBehavior extends Behavior
     private function decryptValue($attribute)
     {
         
-      echo  $this->owner->$attribute = $this->getEncrypter()->decrypt($this->owner->$attribute);
+      $this->owner->$attribute = $this->getEncrypter()->decrypt($this->owner->$attribute);
         
     }
 
