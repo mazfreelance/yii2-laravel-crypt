@@ -1,14 +1,14 @@
 {
-    "name": "xwei3752/yii2-laravel-crypt",
+    "name": "mazfreelance/yii2-laravel-crypt",
     "type": "library",
     "description": "yii2-laravel-crypt is yii2 library compatiable with laravel",
     "keywords": ["yii2", "laravel", "crypt", "web service"],
     "license": "MIT",
     "authors": [
         {
-            "name": "xwei",
-            "email": "xwei3752@gmail.com",
-            "homepage": "https://github.com/xwei3752/yii2-laravel-crypt"
+            "name": "mazfreelance",
+            "email": "maz.webfreelance@gmail.com",
+            "homepage": "https://github.com/mazfreelance/yii2-laravel-crypt"
         }
     ],
     "require": {

@@ -1,10 +1,45 @@
-# yii2-laravel-crypt
+# Yii2 Laravel Cryption
 this is same as laravel(>=5.1) encrypt and decrypt function.
 
-##example:
+## Changelog
+### 1.1.4 November 16, 2021
+* Enh : Add behavior for an Active record
 
+## Installation
 ```
-$cryption = new \Cryption\Encrypter("yourRandomString","AES-256-CBC");
-$cryption->encrypt("yourData");
+composer require mazfreelance/yii2-laravel-crypt
+```
 
+## Config
+add your params local
+```
+'encrypter' => [
+    'key' = '',
+    'cipher' = ''
+]
+```
+
+## Usage:
+#### 1) single use OR
+```
+use Cryption\Encrypter;
+
+$cryption = Encrypter("yourRandomString","AES-256-CBC");
+$cryption->encrypt("yourData");`
+```
+#### 2) this Behavior is used to encrypt data before storing it on the database and to decrypt it upon retrieval.
+- add the following code on Model class
+```
+public function behaviors()
+{
+    return [
+        'encryption' => [
+            'class' => '\nickcv\encrypter\behaviors\EncryptionBehavior',
+            'attributes' => [
+                'attribute1',
+                'attribute2',
+            ],
+        ],
+    ];
+}
 ```
