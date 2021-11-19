@@ -13,7 +13,7 @@ class Encrypter extends BaseEncrypter
      *
      * @var string
      */
-    protected $cipher;
+    protected $key, $cipher, $iv;
 
     /**
      * Create a new encrypter instance.
@@ -24,13 +24,22 @@ class Encrypter extends BaseEncrypter
      *
      * @throws \RuntimeException
      */
-    public function __construct($key, $cipher = 'AES-128-CBC')
+    public function __construct($key, $cipher = 'AES-128-CBC', $iv)
     {
-        $key = (string) $key;
+        $iv =$iv;
+
+        if (str_starts_with($key, 'base64:')) {
+            $key = base64_decode(substr($key, 7));
+        } else {
+            $key =$key;
+        }
+
+        // dd([$key, $cipher, $iv]);
 
         if (static::supported($key, $cipher)) {
             $this->key = $key;
             $this->cipher = $cipher;
+            $this->iv = $iv;
         } else {
             throw new RuntimeException('The only supported ciphers are AES-128-CBC and AES-256-CBC with the correct key lengths.');
         }
@@ -60,9 +69,9 @@ class Encrypter extends BaseEncrypter
      */
     public function encrypt($value)
     {
-        $iv = \random_bytes($this->getIvSize());
+        //$iv = \random_bytes($this->getIvSize());
 
-        $value = \openssl_encrypt(serialize($value), $this->cipher, $this->key, 0, $iv);
+        $value = \openssl_encrypt(serialize($value), $this->cipher, $this->key, 0, $this->iv);
 
         if ($value === false) {
             throw new EncryptException('Could not encrypt the data.');
@@ -71,7 +80,7 @@ class Encrypter extends BaseEncrypter
         // Once we have the encrypted value we will go ahead base64_encode the input
         // vector and create the MAC for the encrypted value so we can verify its
         // authenticity. Then, we'll JSON encode the data in a "payload" array.
-        $mac = $this->hash($iv = base64_encode($iv), $value);
+        $mac = $this->hash($iv = base64_encode($this->iv), $value);
 
         $json = json_encode(compact('iv', 'value', 'mac'));
 
@@ -92,6 +101,10 @@ class Encrypter extends BaseEncrypter
      */
     public function decrypt($payload)
     {
+        if(!$payload) {
+            return null;
+        }
+
         $payload = $this->getJsonPayload($payload);
 
         $iv = base64_decode($payload['iv']);

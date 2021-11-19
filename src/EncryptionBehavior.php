@@ -96,9 +96,7 @@ class EncryptionBehavior extends Behavior
      */
     private function decryptValue($attribute)
     {
-        
-      $this->owner->$attribute = $this->getEncrypter()->decrypt($this->owner->$attribute);
-        
+        $this->owner->$attribute = $this->getEncrypter()->decrypt($this->owner->$attribute);
     }
 
     /**
@@ -120,7 +118,7 @@ class EncryptionBehavior extends Behavior
     private function getEncrypter()
     {
         try {
-            return $cryption = new Encrypter(Yii::$app->params['encrypter']['key'], Yii::$app->params['encrypter']['cipher']);
+            return $cryption = new Encrypter(Yii::$app->params['encrypter']['key'], Yii::$app->params['encrypter']['cipher'], Yii::$app->params['encrypter']['iv']);
         } catch (\Exception $exc) {
             throw new InvalidConfigException('Encrypter component not enabled.');
         }        
