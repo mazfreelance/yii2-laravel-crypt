@@ -2,9 +2,10 @@
 this is same as laravel(>=5.1) encrypt and decrypt function.
 
 ## Changelog
-### 1.1.4 November 16, 2021
-* Enh : Add behavior for an Active record
+### 1.1.3 November 22, 2021
 * Enh [#1](https://github.com/mazfreelance/yii2-laravel-crypt/pull/1): change formula to using fix iv for encryption
+### 1.1.2 November 16, 2021
+* Enh : Add behavior for an Active record
 
 ## Installation
 ```
