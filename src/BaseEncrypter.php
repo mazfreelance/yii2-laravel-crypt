@@ -6,6 +6,13 @@ use Cryption\Exception\DecryptException;
 
 abstract class BaseEncrypter
 {
+    protected $iv;
+
+    public function __construct($iv = null)
+    {
+        $this->iv = $iv;
+    }
+
     /**
      * The encryption key.
      *
@@ -22,7 +29,7 @@ abstract class BaseEncrypter
      */
     protected function hash($iv, $value)
     {
-        return hash_hmac('sha256', $iv.$value, $this->key);
+        return hash_hmac('sha256', $iv . $value, $this->key);
     }
 
     /**
@@ -35,20 +42,24 @@ abstract class BaseEncrypter
      */
     protected function getJsonPayload($payload)
     {
-        if(!$payload) {
+        if (!$payload) {
             return $payload;
         }
-        
+
         $payload = json_decode(base64_decode($payload), true);
-        
+
+        if (!$payload) {
+            return null;
+        }
+
         // If the payload is not valid JSON or does not have the proper keys set we will
         // assume it is invalid and bail out of the routine since we will not be able
         // to decrypt the given value. We'll also check the MAC for this encryption.
-        if (! $payload || $this->invalidPayload($payload)) {
+        if (!$payload || $this->invalidPayload($payload)) {
             throw new DecryptException('The payload is invalid.');
         }
-        
-        if (! $this->validMac($payload)) {
+
+        if (!$this->validMac($payload)) {
             throw new DecryptException('The MAC is invalid.');
         }
 
@@ -63,7 +74,7 @@ abstract class BaseEncrypter
      */
     protected function invalidPayload($data)
     {
-        return ! is_array($data) || ! isset($data['iv']) || ! isset($data['value']) || ! isset($data['mac']);
+        return !is_array($data) || !isset($data['value']) || !isset($data['mac']);
     }
 
     /**
@@ -78,7 +89,7 @@ abstract class BaseEncrypter
     {
         $bytes = random_bytes(16);
 
-        $calcMac = hash_hmac('sha256', $this->hash($payload['iv'], $payload['value']), $bytes, true);
+        $calcMac = hash_hmac('sha256', $this->hash($this->iv, $payload['value']), $bytes, true);
 
         return hash_equals(hash_hmac('sha256', $payload['mac'], $bytes, true), $calcMac);
     }
