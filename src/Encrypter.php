@@ -26,12 +26,12 @@ class Encrypter extends BaseEncrypter
      */
     public function __construct($key, $cipher = 'AES-128-CBC', $iv)
     {
-        $iv =$iv;
+        $iv = $iv;
 
         if (str_starts_with($key, 'base64:')) {
             $key = base64_decode(substr($key, 7));
         } else {
-            $key =$key;
+            $key = $key;
         }
 
         // dd([$key, $cipher, $iv]);
@@ -43,6 +43,8 @@ class Encrypter extends BaseEncrypter
         } else {
             throw new RuntimeException('The only supported ciphers are AES-128-CBC and AES-256-CBC with the correct key lengths.');
         }
+
+        parent::__construct($this->iv);
     }
 
     /**
@@ -69,6 +71,12 @@ class Encrypter extends BaseEncrypter
      */
     public function encrypt($value)
     {
+        if (is_null($value)) {
+            return null;
+        } else if (!$value) {
+            return '';
+        }
+
         //$iv = \random_bytes($this->getIvSize());
 
         $value = \openssl_encrypt(serialize($value), $this->cipher, $this->key, 0, $this->iv);
@@ -80,11 +88,12 @@ class Encrypter extends BaseEncrypter
         // Once we have the encrypted value we will go ahead base64_encode the input
         // vector and create the MAC for the encrypted value so we can verify its
         // authenticity. Then, we'll JSON encode the data in a "payload" array.
-        $mac = $this->hash($iv = base64_encode($this->iv), $value);
+        // $mac = $this->hash($iv = base64_encode($this->iv), $value);
+        $mac = $this->hash($this->iv, $value);
 
-        $json = json_encode(compact('iv', 'value', 'mac'));
+        $json = json_encode(compact('value', 'mac'));
 
-        if (! is_string($json)) {
+        if (!is_string($json)) {
             throw new EncryptException('Could not encrypt the data.');
         }
 
@@ -101,15 +110,17 @@ class Encrypter extends BaseEncrypter
      */
     public function decrypt($payload)
     {
-        if(!$payload) {
+        if (!$payload) {
             return null;
         }
 
         $payload = $this->getJsonPayload($payload);
 
-        $iv = base64_decode($payload['iv']);
+        if (!$payload) {
+            return null;
+        }
 
-        $decrypted = \openssl_decrypt($payload['value'], $this->cipher, $this->key, 0, $iv);
+        $decrypted = \openssl_decrypt($payload['value'], $this->cipher, $this->key, 0, $this->iv);
 
         if ($decrypted === false) {
             throw new DecryptException('Could not decrypt the data.');

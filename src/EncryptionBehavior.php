@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Contains the behavior class used to encrypt data before storing it on a
  * database with an ActiveRecord class.
@@ -10,6 +11,7 @@
  * @author Mazfreelance <maz.webfreelance@gmail.com>
  * @version 1.1
  */
+
 namespace Cryption;
 
 use Yii;
@@ -121,7 +123,6 @@ class EncryptionBehavior extends Behavior
             return $cryption = new Encrypter(Yii::$app->params['encrypter']['key'], Yii::$app->params['encrypter']['cipher'], Yii::$app->params['encrypter']['iv']);
         } catch (\Exception $exc) {
             throw new InvalidConfigException('Encrypter component not enabled.');
-        }        
+        }
     }
-
 }
