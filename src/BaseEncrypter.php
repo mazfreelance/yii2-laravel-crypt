@@ -6,19 +6,19 @@ use Cryption\Exception\DecryptException;
 
 abstract class BaseEncrypter
 {
-    protected $iv;
-
-    public function __construct($iv = null)
-    {
-        $this->iv = $iv;
-    }
-
     /**
      * The encryption key.
      *
      * @var string
      */
     protected $key;
+    
+    protected $iv;
+
+    public function __construct($iv = null)
+    {
+        $this->iv = $iv;
+    }
 
     /**
      * Create a MAC for the given value.
